@@ -1,3 +1,15 @@
+# This file contains common pin mappings for the BIGTREETECH SKR
+# MINI 2.0. To use this config, the firmware should be compiled for 
+# the STM32F103 with a "28KiB bootloader". Also select "enable extra 
+# low-level configuration options" and configure "GPIO pins to set 
+# at micro-controller startup" to "!PA14".
+
+# The "make flash" command does not work on the SKR mini. Instead,
+# after running "make", copy the generated "out/klipper.bin" file to a
+# file named "firmware.bin" on an SD card and then restart the SKR
+# mini with that SD card.
+
+## Voron Design VORON 0.2 SKR Mini E3 V2 config
 
 ## *** THINGS TO CHANGE/CHECK: ***
 ## MCU path                                                                     [mcu] section
@@ -29,37 +41,24 @@ resolution: 0.1
 # Obtain definition by "ls -l /dev/serial/by-id/"
 #                      "ls -l /dev/serial/by-path"
 #####################################################################
-serial: /dev/serial/by-id/usb-Klipper_stm32f446xx_280026001351303530323539-if00
-#serial: /dev/serial/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.1:1.0
+#serial: /dev/serial/by-id/usb-1a86_USB_Serial-if00-port0
+serial: /dev/serial/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.1:1.0
 
 [mcu rpi]
 serial: /tmp/klipper_host_mcu
 
-[adxl345]
-cs_pin: EBBCan: PB12
-spi_software_sclk_pin: EBBCan: PB10
-spi_software_mosi_pin: EBBCan: PB11
-spi_software_miso_pin: EBBCan: PB2
-axes_map: x,y,z
+#[adxl345]
+#cs_pin: rpi:None
 
-[resonance_tester]
-accel_chip: adxl345
-probe_points:
-    65, 65, 20  # an example
-
-[input_shaper]
-shaper_freq_x: 129.6
-shaper_type_x: mzv
-shaper_freq_y: 74.2
-shaper_type_y: mzv
-
+#[resonance_tester]
+#accel_chip: adxl345
 
 #-------------------------------
 
 [printer]
 kinematics: corexy
 max_velocity: 200
-max_accel: 5000
+max_accel: 2000
 max_z_velocity: 15
 max_z_accel: 300
 square_corner_velocity: 6.0
@@ -69,10 +68,10 @@ square_corner_velocity: 6.0
 #####################################################################
 
 [stepper_x]
-step_pin: PE11
+step_pin: PB13
 ## Refer to https://docs.vorondesign.com/build/startup/#v0
-dir_pin: !PE10                                                       # Check motor direction in link above. If inverted, add a ! before PB12
-enable_pin: !PE9
+dir_pin: PB12                                                       # Check motor direction in link above. If inverted, add a ! before PB12
+enable_pin: !PB14
 rotation_distance: 40
 microsteps: 64 #32
 full_steps_per_rotation: 200                                        # Set to 400 for 0.9° degree stepper motor, 200 is for 1.8° stepper motors
@@ -84,22 +83,22 @@ homing_retract_dist: 0
 homing_positive_dir: true
 
 [tmc2209 stepper_x]
-uart_pin: PE7
-#tx_pin: PC10
-#uart_address: 0
+uart_pin: PC11
+tx_pin: PC10
+uart_address: 0
 interpolate: True #False
-run_current: 0.67 #0.5 #0.7            
+run_current: 0.707 #0.5 #0.7            
 # you need to calculate the run_current value using the equation (rated_motor_current * 0.707 = Maximum_run_current) start with a value that is about 60%-70% of your maximum value.
 sense_resistor: 0.110
 stealthchop_threshold: 0                                            # Set to 999999 to turn stealthchop on, and 0 to use spreadcycle
-diag_pin: ^PB14  												 	# YOU NEED TO JUMP THIS DIAG PIN ON YOUR BOARD FOR SENSORLESS HOMING TO WORK 
-driver_SGTHRS: 40                                                  # this is set to 255 which is the MAX sensitivity for sensorless homing, you will need to tune this later
+diag_pin: ^PC0  													# YOU NEED TO JUMP THIS DIAG PIN ON YOUR BOARD FOR SENSORLESS HOMING TO WORK 
+driver_SGTHRS: 20                                                  # this is set to 255 which is the MAX sensitivity for sensorless homing, you will need to tune this later
 
 [stepper_y]
-step_pin: PD8
+step_pin: PB10
 ## Refer to https://docs.vorondesign.com/build/startup/#v0
-dir_pin: !PB12                                                        # Check motor direction in link above. If inverted, add a ! before PB2
-enable_pin: !PD9
+dir_pin: PB2                                                        # Check motor direction in link above. If inverted, add a ! before PB2
+enable_pin: !PB11
 rotation_distance: 40
 microsteps: 64 #32
 full_steps_per_rotation: 200                                        # Set to 400 for 0.9° degree stepper motor, 200 is for 1.8° stepper motors
@@ -111,29 +110,29 @@ homing_retract_dist: 0
 homing_positive_dir: true
 
 [tmc2209 stepper_y]
-uart_pin: PE15
-#tx_pin: PC10
-#uart_address: 2
+uart_pin: PC11
+tx_pin: PC10
+uart_address: 2
 interpolate: True #False
 run_current: 0.707 #0.5 #0.7            
 # you need to calculate the run_current value using the equation (rated_motor_current * 0.707 = Maximum_run_current) start with a value that is about 60%-70% of your maximum value.
 sense_resistor: 0.110
 stealthchop_threshold: 0                                            # Set to 999999 to turn stealthchop on, and 0 to use spreadcycle
-diag_pin: ^PB13  													# YOU NEED TO JUMP THIS DIAG PIN ON YOUR BOARD FOR SENSORLESS HOMING TO WORK
-driver_SGTHRS: 60                                                  # this is set to 255 which is the MAX sensitivity for sensorless homing, you will need to tune this later
+diag_pin: ^PC1  													# YOU NEED TO JUMP THIS DIAG PIN ON YOUR BOARD FOR SENSORLESS HOMING TO WORK
+driver_SGTHRS: 25                                                  # this is set to 255 which is the MAX sensitivity for sensorless homing, you will need to tune this later
 
 #####################################################################
 #   Z Stepper Settings
 #####################################################################
 
 [stepper_z]
-step_pin: PD14
-dir_pin: PD13                                                       # Remove the ! before PC5 if motor direction is inverted.
-enable_pin: !PD15
+step_pin: PB0
+dir_pin: !PC5                                                       # Remove the ! before PC5 if motor direction is inverted.
+enable_pin: !PB1
 rotation_distance: 8                                                # For T8x8 integrated lead screw
 microsteps: 32
-endstop_pin: PA3
-#position_endstop: 120
+endstop_pin: ^PC2
+position_endstop: 120
 position_max: 120
 position_min: -1.5
 homing_speed: 20
@@ -141,9 +140,9 @@ second_homing_speed: 3.0
 homing_retract_dist: 3.0
 
 [tmc2209 stepper_z]
-uart_pin: PD10
-#tx_pin: PC10
-#art_address: 1
+uart_pin: PC11
+tx_pin: PC10
+uart_address: 1
 interpolate: False
 ## For OMC (StepperOnline) 17LS13-0404E-200G 0.4A 
 #run_current: 0.2
@@ -206,26 +205,19 @@ stealthchop_threshold: 0                                            # Set to 999
 #####################################################################
 
 [heater_bed]
-heater_pin: PB15
+heater_pin: PC8
 ## Check what thermistor type you have. See https://www.klipper3d.org/Config_Reference.html#common-thermistors for common thermistor types.
 ## Use "Generic 3950" for Keenovo heaters
 sensor_type: Generic 3950
-sensor_pin: PB0
+sensor_pin: PC3
 smooth_time: 3.0
 max_power: 0.6                                                     # Only needed for 100w pads
 min_temp: 0
 max_temp: 120
-#control: pid                                                        # Do PID calibration after initial checks
-#pid_kp: 68.453
-#pid_ki: 2.749
-#pid_kd: 426.122
-
-#-------------Chaber theristor-----------------
-
-[temperature_sensor chamber_temp]
-sensor_type: Generic 3950
-sensor_pin: PC2
-
+control: pid                                                        # Do PID calibration after initial checks
+pid_kp: 68.453
+pid_ki: 2.749
+pid_kd: 426.122
 
 #####################################################################
 #   Fan Control
@@ -240,27 +232,20 @@ sensor_pin: PC2
 #fan_speed: 1.0                                                     # You can't PWM the delta fan unless using blue wire
 
 [fan_generic bed_fan]
-pin: PA13
+pin: PC6
 max_power: 1.0
 kick_start_time: 0.5                                                # Depending on your fan, you may need to increase this value if your fan will not start
 off_below: 0.13
-cycle_time: 0.010
-
-[fan_generic nevermore]
-pin: PB2
-max_power: 1.0
-kick_start_time: 0.5                                                # Depending on your fan, you may need to increase this value if your fan will not start
-off_below: 0.69
 cycle_time: 0.010
 
 #####################################################################
 #   Filament Runout Sensor
 #####################################################################
 
-#[filament_switch_sensor Filament_Runout_Sensor]
-#pause_on_runout: True
-#runout_gcode: PAUSE
-#switch_pin: PA2
+[filament_switch_sensor Filament_Runout_Sensor]
+pause_on_runout: True
+runout_gcode: PAUSE
+switch_pin: PC15
 
 #####################################################################
 #   Homing and Gantry Adjustment Routines
@@ -309,23 +294,23 @@ screw3_name: back right
 ################################
 ####  Simple Screen Config  ####
 ################################
-#[display]
-#lcd_type: sh1106
-#click_pin: ^!PA15
-#i2c_bus: i2c1a
-#i2c_mcu = mcu
-#encoder_pins: ^PA10, ^PA9
-#kill_pin: ^!PB15
-#vcomh: 60
-#x_offset: 2
+[display]
+lcd_type: sh1106
+click_pin: ^!PA15
+i2c_bus: i2c1a
+i2c_mcu = mcu
+encoder_pins: ^PA10, ^PA9
+kill_pin: ^!PB15
+vcomh: 60
+x_offset: 2
 
-#[neopixel display_led]
-#pin: PB5
-#color_order: GRB
-#chain_count: 1
-#initial_RED: 1.0
-#initial_GREEN: 0.2
-#initial_BLUE: 0.2
+[neopixel display_led]
+pin: PB5
+color_order: GRB
+chain_count: 1
+initial_RED: 1.0
+initial_GREEN: 0.2
+initial_BLUE: 0.2
 
 #sda = pb9
 #scl = pb8
@@ -333,7 +318,7 @@ screw3_name: back right
 #---------Bed Neopixel-----------
 
 [neopixel bed_logo_led]
-pin: PD3
+pin: PA8
 color_order: GRBW
 chain_count: 1
 initial_RED: 1.0
@@ -341,16 +326,6 @@ initial_GREEN: 0.2
 initial_BLUE: 0.2
 initial_WHITE: 0.0
 
-#--------LED_Effect---------------------------
-
-[led_effect bed_effects]
-leds:
-    neopixel:bed_logo_led
-autostart:                          true
-frame_rate:                         24
-heater:                             heater_bed
-layers:
-    temperature 35.00 60.00 top (0.00,0.00,1.00),(1.00,0.00,0.00)
 
 #--------------------------MACROS------------------------------
 
@@ -382,36 +357,33 @@ gcode:
     ## Move the nozzle very close to the bed
     #G1 Z0.15 F300
 
-    ## Move nozzle away from the bed and to the center (side)
+    ## Move nozzle away from the bed and to the center
     SET_DISPLAY_TEXT MSG="Heating Bed"
-    G1 Z15 X0 Y0 F3000
+    G1 Z15 X100 Y82.5 F3000
 
     ## Wait for bed to reach temperature
     M190 S{BED_TEMP}
 
     ## Run Bed Mesh Calibration
-    #SET_DISPLAY_TEXT MSG="Bed mesh"    # Displays info
+    SET_DISPLAY_TEXT MSG="Bed mesh"    # Displays info
     #BED_MESH_CALIBRATE
 
     # KAMP Smart Park
-    #Smart_Park
+    Smart_Park
 
     ## Set and wait for nozzle to reach temperature
-    SET_LED_EFFECT EFFECT=hotend_temp REPLACE=1
     SET_DISPLAY_TEXT MSG="Hotend: {EXTRUDER_TEMP}c"             # Displays info
     M109 S{EXTRUDER_TEMP}
 
     ## Print purge line and get ready to start printing
     SET_DISPLAY_TEXT MSG="PURGING"                     # Displays info
-    G0 X0 Y0 F3000                                   # Moves to purge begin position
-    G0 Z0.8                                           # Lowers nozzle into place for purging
-    G91                                               # Incrimental Positioning
-    G1 E20 F250                                        # Purge line
-    G1 X5 F300                                        # Wipe the poop off the nozzle on the bed?
-    G90                                               # Absolute Positioning
-    #STOP_LED_EFFECTS LEDS="neopixel:toolhead_idle"
+    #G0 X20 Y0 F3000                                   # Moves to purge begin position
+    #G0 Z0.6                                           # Lowers nozzle into place for purging
+    #G91                                               # Incrimental Positioning
+    #G1 X125 E20 F250                                  # Purge line
+    #G90                                               # Absolute Positioning
     SET_DISPLAY_TEXT MSG="PRINTING"                    # Displays info on LCD
-    #LINE_PURGE                                         # KAMP line purge
+    LINE_PURGE                                         # KAMP line purge
     
 #--------------------------------------------------------------
 
@@ -461,11 +433,6 @@ gcode:
     M107                           ; turn off fan
     G90                            ; absolute positioning
     G0 X60 Y{max_y-10} F3600          ; park nozzle at rear
-    G0 Z120                         ; send the bed to the bottom
-    M400                            ; wait for current moves to finish
-    M18                             ; turn off motors
-    #SET_LED_EFFECT EFFECT=toolhead_idle REPLACE=1
-    
     
     
     #BED_MESH_CLEAR
@@ -508,15 +475,15 @@ gcode:
 [gcode_macro LOAD_FILAMENT]
 gcode:
    M83                            ; set extruder to relative
-   G1 E50 F300                    ; load
-   G1 E45 F150                    ; prime nozzle with filament
+   G1 E30 F300                    ; load
+   G1 E15 F150                    ; prime nozzle with filament
    M82                            ; set extruder to absolute
     
 [gcode_macro UNLOAD_FILAMENT]
 gcode:
    M83                            ; set extruder to relative
    G1 E10 F300                    ; extrude a little to soften tip
-   G1 E-70 F1800                  ; retract some, but not too much or it will jam
+   G1 E-40 F1800                  ; retract some, but not too much or it will jam
    M82                            ; set extruder to absolute
 
 [gcode_macro _HOME_X]
@@ -651,15 +618,19 @@ gcode:
 #*#
 #*# [extruder]
 #*# control = pid
-#*# pid_kp = 26.223
-#*# pid_ki = 1.231
-#*# pid_kd = 139.641
+#*# pid_kp = 33.653
+#*# pid_ki = 4.399
+#*# pid_kd = 64.360
 #*#
 #*# [heater_bed]
 #*# control = pid
-#*# pid_kp = 39.024
-#*# pid_ki = 1.807
-#*# pid_kd = 210.727
+#*# pid_kp = 73.992
+#*# pid_ki = 1.847
+#*# pid_kd = 740.843
 #*#
-#*# [stepper_z]
-#*# position_endstop = 119.444
+#*# [input_shaper]
+#*# shaper_type_y = ei
+#*# shaper_freq_y = 50.4
+#*# shaper_type_x = ei
+#*# shaper_freq_x = 35.8
+#*#
